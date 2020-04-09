@@ -58,8 +58,8 @@ class PretrainingConfig(object):
         kwargs["model_hparam_overrides"]
         if "model_hparam_overrides" in kwargs else {})
     self.embedding_size = None  # bert hidden size by default
-    self.vocab_size = 30522  # number of tokens in the vocabulary
-    self.do_lower_case = True  # lowercase the input?
+    self.vocab_size = 119547  # number of tokens in the vocabulary
+    self.do_lower_case = False  # lowercase the input?
 
     # generator settings
     self.uniform_generator = False  # generator is uniform at random
@@ -75,8 +75,8 @@ class PretrainingConfig(object):
 
     # batch sizes
     self.max_seq_length = 128
-    self.train_batch_size = 128
-    self.eval_batch_size = 128
+    self.train_batch_size = 128*8
+    self.eval_batch_size = 128*8
 
     # TPU settings
     self.use_tpu = True
@@ -89,7 +89,7 @@ class PretrainingConfig(object):
     # default locations of data files
     self.pretrain_tfrecords = os.path.join(
         data_dir, "pretrain_tfrecords/pretrain_data.tfrecord*")
-    self.vocab_file = os.path.join(data_dir, "vocab.txt")
+    self.vocab_file = os.path.join(data_dir, "bert-wordpiece-vocab.txt")
     self.model_dir = os.path.join(data_dir, "models", model_name)
     results_dir = os.path.join(self.model_dir, "results")
     self.results_txt = os.path.join(results_dir, "unsup_results.txt")
