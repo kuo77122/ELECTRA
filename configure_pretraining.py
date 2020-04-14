@@ -38,7 +38,7 @@ class PretrainingConfig(object):
     self.mask_prob = 0.15  # percent of input tokens to mask out / replace
 
     # optimization
-    self.learning_rate = 5e-4
+    self.learning_rate = 3e-4
     self.lr_decay_power = 1.0  # linear weight decay by default
     self.weight_decay_rate = 0.01
     self.num_warmup_steps = 10000
@@ -50,7 +50,7 @@ class PretrainingConfig(object):
     self.num_eval_steps = 100
 
     # model settings
-    self.model_size = "small"  # one of "small", "base", or "large"
+    self.model_size = "base"  # one of "small", "base", or "large"
     # override the default transformer hparams for the provided model size; see
     # modeling.BertConfig for the possible hparams and util.training_utils for
     # the defaults
@@ -58,8 +58,8 @@ class PretrainingConfig(object):
         kwargs["model_hparam_overrides"]
         if "model_hparam_overrides" in kwargs else {})
     self.embedding_size = None  # bert hidden size by default
-    self.vocab_size = 119547  # number of tokens in the vocabulary
-    self.do_lower_case = False  # lowercase the input?
+    self.vocab_size = 30000  # number of tokens in the vocabulary
+    self.do_lower_case = True  # lowercase the input?
 
     # generator settings
     self.uniform_generator = False  # generator is uniform at random
@@ -67,16 +67,16 @@ class PretrainingConfig(object):
                                               # token embeddings?
     self.untied_generator = True  # tie all generator/discriminator weights?
     self.generator_layers = 1.0  # frac of discriminator layers for generator
-    self.generator_hidden_size = 0.25  # frac of discrim hidden size for gen
+    self.generator_hidden_size = 0.33333  # frac of discrim hidden size for gen
     self.disallow_correct = False  # force the generator to sample incorrect
                                    # tokens (so 15% of tokens are always
                                    # fake)
     self.temperature = 1.0  # temperature for sampling from generator
 
     # batch sizes
-    self.max_seq_length = 128
-    self.train_batch_size = 128*8
-    self.eval_batch_size = 128*8
+    self.max_seq_length = 256
+    self.train_batch_size = 128*4
+    self.eval_batch_size = 128*4
 
     # TPU settings
     self.use_tpu = True
@@ -88,8 +88,8 @@ class PretrainingConfig(object):
 
     # default locations of data files
     self.pretrain_tfrecords = os.path.join(
-        data_dir, "pretrain_tfrecords/pretrain_data.tfrecord*")
-    self.vocab_file = os.path.join(data_dir, "bert-wordpiece-vocab.txt")
+        data_dir, "pretrain_tfrecords_30000_max256/pretrain_data.tfrecord*")
+    self.vocab_file = os.path.join(data_dir, "wordpiece_vocab_30000_uncased-vocab.txt")
     self.model_dir = os.path.join(data_dir, "models", model_name)
     results_dir = os.path.join(self.model_dir, "results")
     self.results_txt = os.path.join(results_dir, "unsup_results.txt")
@@ -110,17 +110,17 @@ class PretrainingConfig(object):
       self.num_eval_steps = 2
 
     # defaults for different-sized model
-    if self.model_size == "small":
-      self.embedding_size = 128
+    if self.model_size == "base":
+      self.embedding_size = 768
     # Here are the hyperparameters we used for larger models; see Table 6 in the
     # paper for the full hyperparameters
     # else:
     #   self.max_seq_length = 512
     #   self.learning_rate = 2e-4
     #   if self.model_size == "base":
-    #     self.embedding_size = 768
-    #     self.generator_hidden_size = 0.33333
-    #     self.train_batch_size = 256
+      self.embedding_size = 768
+      self.generator_hidden_size = 0.33333
+      self.train_batch_size = 256
     #   else:
     #     self.embedding_size = 1024
     #     self.mask_prob = 0.25
